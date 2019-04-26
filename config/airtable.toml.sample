@@ -1,0 +1,8 @@
+[database]
+api_key = "keyxxXXXxXxxXxxxx"
+
+[campaign]
+base_id = "appXXxxXxXXxxxxXX"
+
+[characters]
+table_name = "Characters"
