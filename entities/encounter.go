@@ -8,6 +8,7 @@ type Encounter struct {
 	Location string
 	Level    uint
 	Room     uint
+	XP       uint
 }
 
 type EncounterState struct {
@@ -23,9 +24,11 @@ type InitiativeValue struct {
 
 type InitiativeList []InitiativeValue
 
-func (il InitiativeList) Len() int           { return len(il) }
-func (il InitiativeList) Less(i, j int) bool { return il[i].Initiative < il[j].Initiative }
-func (il InitiativeList) Swap(i, j int)      { il[i], il[j] = il[j], il[i] }
+func (il InitiativeList) Len() int { return len(il) }
+func (il InitiativeList) Less(i, j int) bool {
+	return il[i].Initiative < il[j].Initiative || (il[i].Initiative == il[j].Initiative && il[i].Character.DexST < il[j].Character.DexST)
+}
+func (il InitiativeList) Swap(i, j int) { il[i], il[j] = il[j], il[i] }
 
 func (il InitiativeList) Characters() []*Character {
 	var characters []*Character
