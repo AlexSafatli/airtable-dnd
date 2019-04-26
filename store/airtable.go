@@ -2,6 +2,7 @@ package store
 
 import (
 	"../entities"
+	"fmt"
 	"github.com/fabioberger/airtable-go"
 )
 
@@ -37,6 +38,10 @@ func GetCharacters(tableName string, client *airtable.Client) []entities.Charact
 }
 
 func CreateEncounter(encounter entities.Encounter, tableName string, client *airtable.Client) (string, error) {
+	if len(encounter.Name) == 0 {
+		encounter.Name = fmt.Sprintf("s%d_l%d_r%d", encounter.Session,
+			encounter.Level, encounter.Room)
+	}
 	record := airtableEncounter{Fields: encounter}
 	err := client.CreateRecord(tableName, &record)
 	return record.AirtableID, err
