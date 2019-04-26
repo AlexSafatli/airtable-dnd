@@ -6,3 +6,6 @@ base_id = "appXXxxXxXXxxxxXX"
 
 [characters]
 table_name = "Characters"
+
+[encounters]
+table_name "Encounter"

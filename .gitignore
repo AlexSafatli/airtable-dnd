@@ -5,6 +5,7 @@
 *.so
 *.dylib
 main
+airtable-dnd
 
 # Test binary, build with `go test -c`
 *.test

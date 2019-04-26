@@ -1,0 +1,11 @@
+{
+  "Encounter": {
+    "Name": "s2_l1_r2",
+    "Session": 2,
+    "Level": 1,
+    "Room": 2
+  },
+  "Participants": [
+    {"Name": "Door", "Initiative": 2}
+  ]
+}
