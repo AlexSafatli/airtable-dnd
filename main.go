@@ -21,6 +21,12 @@ type InputEncounter struct {
 }
 
 func main() {
+	// Check if arg length correct
+	if len(os.Args) != 3 {
+		fmt.Printf("Usage of %s:\n <submit/init> <json>", os.Args[0])
+		os.Exit(1)
+	}
+
 	conf := config.NewConfig()
 	if err := conf.LoadConfigs(basePath, confType); err != nil {
 		panic(err)
@@ -42,13 +48,24 @@ func main() {
 
 	// Read encounter data in as JSON; characters will be added to
 	var encounter InputEncounter
-	f, err := os.Open(os.Args[1])
+	f, err := os.Open(os.Args[2])
 	if err != nil {
 		panic(err)
 	}
 	r := bufio.NewReader(f)
 	if err := json.NewDecoder(r).Decode(&encounter); err != nil {
 		panic(err)
+	}
+
+	// Submit to AirTable if "submit" command, otherwise get additional info
+	if os.Args[1] == "submit" {
+		// Save to Airtable
+		_, err = store.CreateEncounter(*encounter.Encounter,
+			conf.ValueString("encounters.table_name"), conn)
+		if err != nil {
+			panic(err)
+		}
+		return
 	}
 
 	// Roll initiative of existing characters in the encounter
@@ -69,12 +86,6 @@ func main() {
 	}
 
 	for _, char := range entities.RankInitiatives(initiatives).Characters() {
-		fmt.Printf("%s, %d\n", char.Name, initiatives[char])
-	}
-
-	// Save to Airtable
-	_, err = store.CreateEncounter(*encounter.Encounter, conf.ValueString("encounters.table_name"), conn)
-	if err != nil {
-		panic(err)
+		fmt.Printf("%s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
 	}
 }
