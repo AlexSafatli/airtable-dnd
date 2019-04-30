@@ -22,15 +22,18 @@ type InputEncounter struct {
 
 func main() {
 	// Check if arg length correct
-	if len(os.Args) != 3 {
-		fmt.Printf("Usage of %s:\n <submit/slots/init> <json>\n", os.Args[0])
+	if len(os.Args) < 2 || len(os.Args) > 3 {
+		fmt.Printf("Usage of %s:\n <json> [submit/slots]\n", os.Args[0])
 		os.Exit(1)
 	}
 
+	// Read config file(s)
 	conf := config.NewConfig()
 	if err := conf.LoadConfigs(basePath, confType); err != nil {
 		panic(err)
 	}
+
+	// Open AirTable connection to campaign base
 	conn, err := store.OpenConnection(conf.ValueString("database.api_key"), conf.ValueString("campaign.base_id"))
 	if err != nil {
 		panic(err)
@@ -38,17 +41,13 @@ func main() {
 
 	var characters []entities.Character
 	characters = store.GetCharacters(conf.ValueString("characters.table_name"), conn)
-
 	if len(characters) == 0 {
-		panic("No characters found")
+		panic("No characters found on AirTable")
 	}
-
-	var initiatives map[*entities.Character]int
-	initiatives = make(map[*entities.Character]int)
 
 	// Read encounter data in as JSON; characters will be added to
 	var encounter InputEncounter
-	f, err := os.Open(os.Args[2])
+	f, err := os.Open(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +57,7 @@ func main() {
 	}
 
 	// Submit to AirTable if "submit" command, otherwise get additional info
-	if os.Args[1] == "submit" {
+	if len(os.Args) > 2 && os.Args[2] == "submit" {
 		// Save to Airtable
 		_, err = store.CreateEncounter(*encounter.Encounter,
 			conf.ValueString("encounters.table_name"), conn)
@@ -69,9 +68,10 @@ func main() {
 	}
 
 	// Roll initiative of existing characters in the encounter
+	var initiatives map[*entities.Character]int
+	initiatives = make(map[*entities.Character]int)
 	for _, char := range encounter.Participants {
-		initiative := RollDice(1, 20) + char.Initiative
-		initiatives[char] = initiative
+		initiatives[char] = RollDice(1, 20) + char.Initiative
 	}
 
 	// Add PCs, get their initiatives
@@ -81,21 +81,24 @@ func main() {
 		encounter.Participants = append(encounter.Participants, &characters[i])
 		fmt.Printf("Enter Initiative for %s: ", characters[i].Name)
 		if _, err := fmt.Scanf("%d", &initiative); err != nil {
-			panic(err)
+			initiative = RollDice(1, 20) + characters[i].Initiative
 		}
 		initiatives[&characters[i]] = initiative
 	}
+	printInitiatives(initiatives)
+}
 
+func printInitiatives(initiatives map[*entities.Character]int) {
 	for _, char := range entities.RankInitiatives(initiatives).Characters() {
 		// Show turn slots (factions) instead
-		if os.Args[1] == "slots" {
+		if len(os.Args) > 2 && os.Args[2] == "slots" {
 			var name string
 			if char.Affiliated {
 				name = char.Name
 			} else {
 				name = "Enemy"
 			}
-			fmt.Printf("%-8s\t%d\t%t\n", name, initiatives[char], char.Affiliated)
+			fmt.Printf("%-8s\t%d\n", name, initiatives[char])
 		} else {
 			fmt.Printf("%-8s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
 		}
