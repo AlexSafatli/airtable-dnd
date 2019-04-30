@@ -14,6 +14,7 @@ type Character struct {
 	Type       string
 	Speed      uint8
 	Player     string
+	Affiliated bool
 }
 
 type CharacterSize uint8

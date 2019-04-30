@@ -3,9 +3,20 @@
     "Name": "s2_l1_r2",
     "Session": 2,
     "Level": 1,
-    "Room": 2
+    "Room": 2,
+    "XP": 30
   },
   "Participants": [
+    {"Name": "Door", "Initiative": 2, "HP": 2},
+    {"Name": "Burglar", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
     {"Name": "Door", "Initiative": 2}
   ]
 }

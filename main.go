@@ -23,7 +23,7 @@ type InputEncounter struct {
 func main() {
 	// Check if arg length correct
 	if len(os.Args) != 3 {
-		fmt.Printf("Usage of %s:\n <submit/init> <json>", os.Args[0])
+		fmt.Printf("Usage of %s:\n <submit/slots/init> <json>\n", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -77,6 +77,7 @@ func main() {
 	// Add PCs, get their initiatives
 	for i := range characters {
 		var initiative int
+		characters[i].Affiliated = true
 		encounter.Participants = append(encounter.Participants, &characters[i])
 		fmt.Printf("Enter Initiative for %s: ", characters[i].Name)
 		if _, err := fmt.Scanf("%d", &initiative); err != nil {
@@ -86,6 +87,17 @@ func main() {
 	}
 
 	for _, char := range entities.RankInitiatives(initiatives).Characters() {
-		fmt.Printf("%s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
+		// Show turn slots (factions) instead
+		if os.Args[1] == "slots" {
+			var name string
+			if char.Affiliated {
+				name = char.Name
+			} else {
+				name = "Enemy"
+			}
+			fmt.Printf("%-8s\t%d\t%t\n", name, initiatives[char], char.Affiliated)
+		} else {
+			fmt.Printf("%-8s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
+		}
 	}
 }
