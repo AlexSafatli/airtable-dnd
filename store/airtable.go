@@ -30,9 +30,10 @@ func GetCharacters(tableName string, client *airtable.Client) []entities.Charact
 		return []entities.Character{}
 	}
 	var characters []entities.Character
-	characters = make([]entities.Character, len(records))
 	for i := range records {
-		characters[i] = records[i].Fields
+		if len(records[i].Fields.Name) > 0 {
+			characters = append(characters, records[i].Fields)
+		}
 	}
 	return characters
 }
