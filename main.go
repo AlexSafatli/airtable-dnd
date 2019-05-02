@@ -11,8 +11,12 @@ import (
 )
 
 const (
-	confType = "toml"
-	basePath = "config"
+	confType        = "toml"
+	basePath        = "config"
+	apiKey          = "database.api_key"
+	campaignBase    = "campaign.base_id"
+	charactersTable = "characters.table_name"
+	encountersTable = "encounters.table_name"
 )
 
 type InputEncounter struct {
@@ -34,13 +38,13 @@ func main() {
 	}
 
 	// Open AirTable connection to campaign base
-	conn, err := store.OpenConnection(conf.ValueString("database.api_key"), conf.ValueString("campaign.base_id"))
+	conn, err := store.OpenConnection(conf.ValueString(apiKey), conf.ValueString(campaignBase))
 	if err != nil {
 		panic(err)
 	}
 
 	var characters []entities.Character
-	characters = store.GetCharacters(conf.ValueString("characters.table_name"), conn)
+	characters = store.GetCharacters(conf.ValueString(charactersTable), conn)
 	if len(characters) == 0 {
 		panic("No characters found on AirTable")
 	}
@@ -60,7 +64,7 @@ func main() {
 	if len(os.Args) > 2 && os.Args[2] == "submit" {
 		// Save to Airtable
 		_, err = store.CreateEncounter(*encounter.Encounter,
-			conf.ValueString("encounters.table_name"), conn)
+			conf.ValueString(encountersTable), conn)
 		if err != nil {
 			panic(err)
 		}
@@ -85,6 +89,7 @@ func main() {
 		}
 		initiatives[&characters[i]] = initiative
 	}
+
 	printInitiatives(initiatives)
 }
 
