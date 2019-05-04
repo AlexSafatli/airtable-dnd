@@ -2,10 +2,14 @@
 api_key = "keyxxXXXxXxxXxxxx"
 
 [campaign]
-base_id = "appXXxxXxXXxxxxXX"
+players_base_id = "appXXxxXxXXxxxxXX"
+dm_base_id = "appXXxxXxXXxxxxXX"
 
 [characters]
 table_name = "Characters"
+
+[npcs]
+table_name = "NPCs"
 
 [encounters]
 table_name "Encounter"

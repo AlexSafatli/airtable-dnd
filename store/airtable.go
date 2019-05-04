@@ -38,6 +38,12 @@ func GetCharacters(tableName string, client *airtable.Client) []entities.Charact
 	return characters
 }
 
+func CreateCharacter(character entities.Character, tableName string, client *airtable.Client) (string, error) {
+	record := airtableCharacter{Fields: character}
+	err := client.CreateRecord(tableName, &record)
+	return record.AirtableID, err
+}
+
 func CreateEncounter(encounter entities.Encounter, tableName string, client *airtable.Client) (string, error) {
 	if len(encounter.Name) == 0 {
 		encounter.Name = fmt.Sprintf("s%d_l%d_r%d", encounter.Session,

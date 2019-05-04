@@ -14,9 +14,11 @@ const (
 	confType        = "toml"
 	basePath        = "config"
 	apiKey          = "database.api_key"
-	campaignBase    = "campaign.base_id"
+	campaignBase    = "campaign.players_base_id"
+	dmBase          = "campaign.dm_base_id"
 	charactersTable = "characters.table_name"
 	encountersTable = "encounters.table_name"
+	npcsTable       = "npcs.table_name"
 )
 
 type InputEncounter struct {
@@ -60,14 +62,16 @@ func main() {
 		panic(err)
 	}
 
-	// Submit to AirTable if "submit" command, otherwise get additional info
+	// Submit to AirTable if "submit" command, otherwise do not yet
 	if len(os.Args) > 2 && os.Args[2] == "submit" {
 		// Save to Airtable
-		_, err = store.CreateEncounter(*encounter.Encounter,
+		var id string
+		id, err = store.CreateEncounter(*encounter.Encounter,
 			conf.ValueString(encountersTable), conn)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("Submitted '%s' to AirTable\n", id)
 		return
 	}
 
