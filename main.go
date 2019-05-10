@@ -26,13 +26,49 @@ type InputEncounter struct {
 	Encounter    *entities.Encounter
 }
 
-func loadConfigs() *config.Config {
+type configValues struct {
+	ApiKey       string
+	CampaignBase string
+	TableNames   struct {
+		Characters string
+		Encounters string
+	}
+}
+
+func loadConfigs() configValues {
 	var conf *config.Config
 	conf = config.NewConfig()
 	if err := conf.LoadConfigs(basePath, confType); err != nil {
 		panic(err)
 	}
-	return conf
+	return configValues{
+		ApiKey:       conf.ValueString(apiKey),
+		CampaignBase: conf.ValueString(campaignBase),
+		TableNames: struct {
+			Characters string
+			Encounters string
+		}{
+			Characters: conf.ValueString(charactersTable),
+			Encounters: conf.ValueString(encountersTable),
+		},
+	}
+}
+
+func printInitiatives(initiatives map[*entities.Character]int) {
+	for _, char := range entities.RankInitiatives(initiatives).Characters() {
+		// Show turn slots (factions) instead
+		if len(os.Args) > 2 && os.Args[2] == "slots" {
+			var name string
+			if char.Affiliated {
+				name = char.Name
+			} else {
+				name = "Enemy"
+			}
+			fmt.Printf("%-8s\t%d\n", name, initiatives[char])
+		} else {
+			fmt.Printf("%-8s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
+		}
+	}
 }
 
 func main() {
@@ -46,13 +82,13 @@ func main() {
 	conf := loadConfigs()
 
 	// Open AirTable connection to campaign base
-	conn, err := store.OpenConnection(conf.ValueString(apiKey), conf.ValueString(campaignBase))
+	conn, err := store.OpenConnection(conf.ApiKey, conf.CampaignBase)
 	if err != nil {
 		panic(err)
 	}
 
 	var characters []entities.Character
-	characters = store.GetCharacters(conf.ValueString(charactersTable), conn)
+	characters = store.GetCharacters(conf.TableNames.Characters, conn)
 	if len(characters) == 0 {
 		panic("No characters found on AirTable")
 	}
@@ -72,12 +108,11 @@ func main() {
 	if len(os.Args) > 2 && os.Args[2] == "submit" {
 		// Save to Airtable
 		var id string
-		id, err = store.CreateEncounter(*encounter.Encounter,
-			conf.ValueString(encountersTable), conn)
+		id, err = store.CreateEncounter(*encounter.Encounter, conf.TableNames.Encounters, conn)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Submitted '%s' to AirTable\n", id)
+		fmt.Printf("Submitted '%s' to AirTable (XP %d)\n", id, encounter.Encounter.XP)
 		return
 	}
 
@@ -101,21 +136,4 @@ func main() {
 	}
 
 	printInitiatives(initiatives)
-}
-
-func printInitiatives(initiatives map[*entities.Character]int) {
-	for _, char := range entities.RankInitiatives(initiatives).Characters() {
-		// Show turn slots (factions) instead
-		if len(os.Args) > 2 && os.Args[2] == "slots" {
-			var name string
-			if char.Affiliated {
-				name = char.Name
-			} else {
-				name = "Enemy"
-			}
-			fmt.Printf("%-8s\t%d\n", name, initiatives[char])
-		} else {
-			fmt.Printf("%-8s\t%d\t%d\n", char.Name, initiatives[char], char.HP)
-		}
-	}
 }
