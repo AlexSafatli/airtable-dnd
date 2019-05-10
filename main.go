@@ -26,6 +26,15 @@ type InputEncounter struct {
 	Encounter    *entities.Encounter
 }
 
+func loadConfigs() *config.Config {
+	var conf *config.Config
+	conf = config.NewConfig()
+	if err := conf.LoadConfigs(basePath, confType); err != nil {
+		panic(err)
+	}
+	return conf
+}
+
 func main() {
 	// Check if arg length correct
 	if len(os.Args) < 2 || len(os.Args) > 3 {
@@ -34,10 +43,7 @@ func main() {
 	}
 
 	// Read config file(s)
-	conf := config.NewConfig()
-	if err := conf.LoadConfigs(basePath, confType); err != nil {
-		panic(err)
-	}
+	conf := loadConfigs()
 
 	// Open AirTable connection to campaign base
 	conn, err := store.OpenConnection(conf.ValueString(apiKey), conf.ValueString(campaignBase))
