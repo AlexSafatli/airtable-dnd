@@ -53,7 +53,7 @@ func main() {
 		panic("No characters found on AirTable")
 	}
 
-	// Read encounter data in as JSON; characters will be added to
+	// Read encounter data in as JSON; characters will be added
 	var encounter InputEncounter
 	f, err := os.Open(os.Args[1])
 	if err != nil {
@@ -64,7 +64,10 @@ func main() {
 		panic(err)
 	}
 
-	// Submit to AirTable if "submit" command, otherwise do not yet
+	// Make adjustments to encounter object where necessary
+	encounter.Encounter.NumPlayers = uint(len(characters))
+
+	// Submit to AirTable if "submit" command, otherwise continue
 	if len(os.Args) > 2 && os.Args[2] == "submit" {
 		// Save to Airtable
 		var id string
@@ -72,7 +75,8 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Submitted '%s' to AirTable (XP %d)\n", id, encounter.Encounter.XP)
+		fmt.Printf("Encounter '%s' -> AirTable (XP %d, # Players %d)\n", id,
+			encounter.Encounter.XP, encounter.Encounter.NumPlayers)
 		return
 	}
 

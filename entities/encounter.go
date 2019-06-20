@@ -3,12 +3,13 @@ package entities
 import "sort"
 
 type Encounter struct {
-	Name     string
-	Session  uint
-	Location string
-	Level    uint
-	Room     uint
-	XP       uint
+	Name       string
+	Session    uint
+	Location   string
+	Level      uint
+	Room       uint
+	NumPlayers uint `json:"Number of Players"`
+	XP         uint
 }
 
 type EncounterState struct {
@@ -39,8 +40,8 @@ func (il InitiativeList) Characters() []*Character {
 	return characters
 }
 
-func NewEncounter(session uint, loc string, level, room uint) *Encounter {
-	return &Encounter{Session: session, Location: loc, Level: level, Room: room}
+func NewEncounter(session uint, loc string, level, room, numPlayers uint) *Encounter {
+	return &Encounter{Session: session, Location: loc, Level: level, Room: room, NumPlayers: numPlayers}
 }
 
 func RankInitiatives(initiatives map[*Character]int) InitiativeList {
