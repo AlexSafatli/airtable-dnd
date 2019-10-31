@@ -1,2 +1,35 @@
 # airtable-dnd
-Manage a D&amp;D campaign from the command line with AirTable
+A CLI to manage a D&amp;D campaign from the command line with Airtable. Currently only partially implemented and only to record encounters as they are completed alongside an optional ability to display the initiative order of characters and enemies.
+
+# Build
+
+`go build .`
+
+# Usage
+
+`./airtable-dnd <encounter_json_file_path> [submit/slots]` where the path to an encounter JSON file points to a file with the following example format:
+
+```
+{
+  "Encounter": {
+    "Name": "s2_l1_r2",
+    "Session": 2,
+    "Level": 1,
+    "Room": 2,
+    "XP": 30
+  },
+  "Participants": [
+    {"Name": "Door", "Initiative": 2, "HP": 2},
+    {"Name": "Burglar", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2},
+    {"Name": "Door", "Initiative": 2}
+  ]
+}
+```
