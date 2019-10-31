@@ -3,11 +3,11 @@ A CLI to manage a D&amp;D campaign from the command line with Airtable.
 
 Currently *only partially implemented* (WIP) and only able to record encounters as they are completed alongside an optional ability to display the initiative order of characters and enemies.
 
-# Build
+## Build
 
 `go build .`
 
-# Usage
+## Usage
 
 `./airtable-dnd <encounter_json_file_path> [submit/slots]` where the path to an encounter JSON file points to a file with the following example format:
 
@@ -36,16 +36,16 @@ Currently *only partially implemented* (WIP) and only able to record encounters 
 }
 ```
 
-# Current Features
+## Current Features
 
   - Encounter submission/recordkeeping
   - Encounter initiative order
 
-# Planned Features
+## Planned Features
 
   - Random generation of entities (NPCs, etc.)
   - Management of characters (party loot, etc.)
 
-# Related Project
+## Related Projects
 
   - [Saber](https://github.com/alexSafatli/saber) which is intended to be an underlying engine to this CLI
