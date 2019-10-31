@@ -1,5 +1,7 @@
 # airtable-dnd
-A CLI to manage a D&amp;D campaign from the command line with Airtable. Currently only partially implemented and only to record encounters as they are completed alongside an optional ability to display the initiative order of characters and enemies.
+A CLI to manage a D&amp;D campaign from the command line with Airtable.
+
+Currently *only partially implemented* (WIP) and only able to record encounters as they are completed alongside an optional ability to display the initiative order of characters and enemies.
 
 # Build
 
@@ -33,3 +35,17 @@ A CLI to manage a D&amp;D campaign from the command line with Airtable. Currentl
   ]
 }
 ```
+
+# Current Features
+
+  - Encounter submission/recordkeeping
+  - Encounter initiative order
+
+# Planned Features
+
+  - Random generation of entities (NPCs, etc.)
+  - Management of characters (party loot, etc.)
+
+# Related Project
+
+  - [Saber](https://github.com/alexSafatli/saber) which is intended to be an underlying engine to this CLI
