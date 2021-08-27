@@ -1,11 +1,11 @@
 package main
 
 import (
-	"./entities"
-	"./store"
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/AlexSafatli/airtable-dnd/entities"
+	"github.com/AlexSafatli/airtable-dnd/store"
 	"os"
 )
 

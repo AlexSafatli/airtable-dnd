@@ -48,4 +48,4 @@ Currently *only partially implemented* (WIP) and only able to record encounters 
 
 ## Related Projects
 
-  - [Saber](https://github.com/alexSafatli/saber) which is intended to be an underlying engine to this CLI
+  - [Saber](https://github.com/alexSafatli/saber) which is intended to eventually be an underlying engine to this CLI

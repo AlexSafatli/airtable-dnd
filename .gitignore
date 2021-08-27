@@ -13,6 +13,9 @@ airtable-dnd
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Go modules
+go.sum
+
 # Configs
 config/*.toml
 

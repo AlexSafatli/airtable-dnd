@@ -1,8 +1,8 @@
 package store
 
 import (
-	"../entities"
 	"fmt"
+	"github.com/AlexSafatli/airtable-dnd/entities"
 	"github.com/fabioberger/airtable-go"
 )
 
