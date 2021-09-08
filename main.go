@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const COIN_WEIGHT = 1 / 50.0
+const CoinWeight = 1 / 50.0
 
 type InputEncounter struct {
 	Participants []*entities.Character
@@ -111,12 +111,12 @@ func manageItems(conf configValues, conn *airtable.Client) {
 			// Set baseline for party gold and do not go further
 			var updateGoldRecord = map[string]interface{}{
 				"Appr. value": 1,
-				"Weight":      COIN_WEIGHT, // a standard coin weights 1/50 lb
+				"Weight":      CoinWeight, // a standard coin weights 1/50 lb
 			}
 			if err := store.UpdateItemByID(items[i].AirtableID, updateGoldRecord, conf.TableNames.Items, conn); err != nil {
 				panic(err)
 			}
-			fmt.Printf("Set weight baseline for party gold (name '%s') as weight %.2f lb.\n", items[i].Fields.Name, COIN_WEIGHT)
+			fmt.Printf("Set weight baseline for party gold (name '%s') as weight %.2f lb.\n", items[i].Fields.Name, CoinWeight)
 			continue
 		}
 		var updateRecord = make(map[string]interface{}, 2)
