@@ -12,4 +12,7 @@ table_name = "Characters"
 table_name = "NPCs"
 
 [encounters]
-table_name "Encounter"
+table_name = "Encounter"
+
+[items]
+table_name = "Party inv"

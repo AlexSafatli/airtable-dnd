@@ -6,14 +6,19 @@ import (
 	"github.com/fabioberger/airtable-go"
 )
 
-type airtableCharacter struct {
+type AirtableCharacter struct {
 	AirtableID string             `json:"id,omitempty"`
 	Fields     entities.Character `json:"fields"`
 }
 
-type airtableEncounter struct {
+type AirtableEncounter struct {
 	AirtableID string             `json:"id,omitempty"`
 	Fields     entities.Encounter `json:"fields"`
+}
+
+type AirtableItem struct {
+	AirtableID string        `json:"id,omitempty"`
+	Fields     entities.Item `json:"fields"`
 }
 
 func OpenConnection(apiKey, baseID string) (*airtable.Client, error) {
@@ -25,7 +30,7 @@ func OpenConnection(apiKey, baseID string) (*airtable.Client, error) {
 }
 
 func GetCharacters(tableName string, client *airtable.Client) []entities.Character {
-	var records []airtableCharacter
+	var records []AirtableCharacter
 	if err := client.ListRecords(tableName, &records); err != nil {
 		return []entities.Character{}
 	}
@@ -39,18 +44,18 @@ func GetCharacters(tableName string, client *airtable.Client) []entities.Charact
 }
 
 func CreateCharacter(character entities.Character, tableName string, client *airtable.Client) (string, error) {
-	record := airtableCharacter{Fields: character}
+	record := AirtableCharacter{Fields: character}
 	err := client.CreateRecord(tableName, &record)
 	return record.AirtableID, err
 }
 
-func UpdateCharacter(id string, fields map[string]interface{}, tableName string, client *airtable.Client) error {
-	record := airtableCharacter{}
+func UpdateCharacterByID(id string, fields map[string]interface{}, tableName string, client *airtable.Client) error {
+	record := AirtableCharacter{}
 	return client.UpdateRecord(tableName, id, fields, &record)
 }
 
 func GetEncounters(tableName string, client *airtable.Client) []entities.Encounter {
-	var records []airtableEncounter
+	var records []AirtableEncounter
 	if err := client.ListRecords(tableName, &records); err != nil {
 		return []entities.Encounter{}
 	}
@@ -73,7 +78,32 @@ func CreateEncounter(encounter entities.Encounter, tableName string, client *air
 			encounter.Name = e.Name + fmt.Sprintf("_%d", i)
 		}
 	}
-	record := airtableEncounter{Fields: encounter}
+	record := AirtableEncounter{Fields: encounter}
 	err := client.CreateRecord(tableName, &record)
 	return record.AirtableID, err
+}
+
+func GetItems(tableName string, client *airtable.Client) []entities.Item {
+	var records = GetItemsWithIDs(tableName, client)
+	var items []entities.Item
+	for i := range records {
+		if len(records[i].Fields.Name) > 0 {
+			items = append(items, records[i].Fields)
+		}
+	}
+	return items
+}
+
+func GetItemsWithIDs(tableName string, client *airtable.Client) []AirtableItem {
+	var records []AirtableItem
+	if err := client.ListRecords(tableName, &records); err != nil {
+		panic(err)
+		return []AirtableItem{}
+	}
+	return records
+}
+
+func UpdateItemByID(id string, fields map[string]interface{}, tableName string, client *airtable.Client) error {
+	record := AirtableItem{}
+	return client.UpdateRecord(tableName, id, fields, &record)
 }

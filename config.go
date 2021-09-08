@@ -10,6 +10,7 @@ const (
 	dmBase          = "campaign.dm_base_id"
 	charactersTable = "characters.table_name"
 	encountersTable = "encounters.table_name"
+	itemsTable      = "items.table_name"
 	npcsTable       = "npcs.table_name"
 )
 
@@ -19,6 +20,7 @@ type configValues struct {
 	TableNames   struct {
 		Characters string
 		Encounters string
+		Items      string
 	}
 }
 
@@ -34,9 +36,11 @@ func loadConfigs() configValues {
 		TableNames: struct {
 			Characters string
 			Encounters string
+			Items      string
 		}{
 			Characters: conf.ValueString(charactersTable),
 			Encounters: conf.ValueString(encountersTable),
+			Items:      conf.ValueString(itemsTable),
 		},
 	}
 }
