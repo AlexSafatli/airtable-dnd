@@ -1,7 +1,9 @@
 # airtable-dnd
 A CLI to manage a D&amp;D campaign from the command line with Airtable.
 
-Currently *only partially implemented* (WIP) and only able to record encounters as they are completed alongside an optional ability to display the initiative order of characters and enemies.
+Currently *only partially implemented* (WIP) and only able to record encounters
+as they are completed alongside an optional ability to display the initiative
+order of characters and enemies.
 
 ## Build
 
@@ -9,7 +11,19 @@ Currently *only partially implemented* (WIP) and only able to record encounters 
 
 ## Usage
 
-`./airtable-dnd <encounter_json_file_path> [submit/slots]` where the path to an encounter JSON file points to a file with the following example format:
+This script has a number of commands and will eventually feature more.
+
+### Manage Items
+
+`./airtable-dnd items <item_json_file_paths...>` uses
+a [5etools](https://5etools.com/) JSON file or set of JSON files containing item
+data to populate weight and value data in a party inventory table.
+
+### Manage Encounters
+
+`./airtable-dnd encounter <encounter_json_file_path> [submit/slots]` where the
+path to an encounter JSON file points to a file with the following example
+format:
 
 ```
 {
@@ -40,11 +54,12 @@ Currently *only partially implemented* (WIP) and only able to record encounters 
 
   - Encounter submission/recordkeeping
   - Encounter initiative order
+  - Management of party loot
 
 ## Planned Features
 
-  - Random generation of entities (NPCs, etc.)
-  - Management of characters (party loot, etc.)
+- Random generation of entities (NPCs, etc.)
+- Management of characters
 
 ## Related Projects
 
