@@ -35,17 +35,9 @@ format:
     "XP": 30
   },
   "Participants": [
-    {"Name": "Door", "Initiative": 2, "HP": 2},
-    {"Name": "Burglar", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2},
-    {"Name": "Door", "Initiative": 2}
+    {"Name": "Bandit", "Initiative": 2, "HP": 12},
+    {"Name": "Burglar", "Initiative": 2, "HP": 23},
+    {"Name": "Mook", "Initiative": 2}
   ]
 }
 ```

@@ -107,10 +107,10 @@ func manageItems(conf configValues, conn *airtable.Client) {
 
 	for i := range items {
 		var name = strings.ToLower(items[i].Fields.Name)
-		if name == "party gold" || name == "gold" {
+		if (name == "party gold" || name == "gold") && items[i].Fields.Weight != CoinWeight {
 			// Set baseline for party gold and do not go further
 			var updateGoldRecord = map[string]interface{}{
-				"Appr. value": 1,
+				"Appr. value": 1,          // a gold coin is worth 1 gp
 				"Weight":      CoinWeight, // a standard coin weights 1/50 lb
 			}
 			if err := store.UpdateItemByID(items[i].AirtableID, updateGoldRecord, conf.TableNames.Items, conn); err != nil {
