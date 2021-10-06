@@ -22,10 +22,9 @@ func main() {
 
 	// Check for empty credentials
 	if len(conf.ApiKey) == 0 || len(conf.CampaignBase) == 0 {
-		fmt.Println("No API key or campaign base ID was found to " +
+		panic("No API key or campaign base ID was found to " +
 			"connect to. Check your config file (this application looks" +
 			" for files in ./config).")
-		os.Exit(1)
 	}
 
 	// Open AirTable connection to campaign base
@@ -34,7 +33,7 @@ func main() {
 		panic(err)
 	}
 
-	// Switch on command
+	// Switch on command - can eventually use cobra for more advanced commands
 	switch command := os.Args[1]; command {
 	case "encounter":
 		runEncounter(conf, conn)
