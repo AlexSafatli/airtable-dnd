@@ -10,9 +10,34 @@ import (
 var conf configValues
 var conn *airtable.Client
 
-var cmdEncounter = &cobra.Command{
-	Use:   "encounter <json> [submit/slots]",
+var rootEncounterCmd = &cobra.Command{
+	Use:   "encounter <command>",
 	Short: "Manage encounters",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		// do nothing
+	},
+}
+
+var cmdEncounterCreate = &cobra.Command{
+	Use:   "create <output_json> <input_5etools_json_folder> [monsterName] [monsterQty] ...",
+	Short: "Create encounters",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires an output JSON path")
+		} else if len(args) < 2 {
+			return errors.New("requires an input JSON file folder with 5etools monster data")
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		createEncounter(args[0], args[1], args[2:])
+	},
+}
+
+var cmdEncounterRun = &cobra.Command{
+	Use:   "run <json> [submit/slots]",
+	Short: "Run an encounter",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires at least a JSON path")
@@ -35,7 +60,7 @@ var cmdEncounter = &cobra.Command{
 }
 
 var cmdItems = &cobra.Command{
-	Use:    "items <jsons>",
+	Use:    "items <5etools_item_jsons>",
 	Short:  "Manage items",
 	Args:   cobra.MinimumNArgs(1),
 	PreRun: preRun,
@@ -73,7 +98,9 @@ func preRun(_ *cobra.Command, _ []string) {
 }
 
 func Execute() {
-	rootCmd.AddCommand(cmdEncounter)
+	rootEncounterCmd.AddCommand(cmdEncounterRun)
+	rootEncounterCmd.AddCommand(cmdEncounterCreate)
+	rootCmd.AddCommand(rootEncounterCmd)
 	rootCmd.AddCommand(cmdItems)
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)

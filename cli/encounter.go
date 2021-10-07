@@ -4,13 +4,18 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/AlexSafatli/airtable-dnd/fetools"
 	"github.com/AlexSafatli/airtable-dnd/remote"
 	"github.com/AlexSafatli/airtable-dnd/rpg"
 	"github.com/fabioberger/airtable-go"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
 )
 
-type inputEncounter struct {
+type encounterData struct {
 	Participants []*rpg.Character
 	Encounter    *rpg.Encounter
 }
@@ -37,7 +42,7 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 	var characters = getAirtableCharacters(conf, conn)
 
 	// Read encounter data in as JSON; characters will be added
-	var encounter inputEncounter
+	var encounter encounterData
 	f, err := os.Open(jsonPath)
 	if err != nil {
 		panic(err)
@@ -82,4 +87,65 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 	}
 
 	printInitiatives(initiatives, directive)
+}
+
+func createEncounter(jsonPath, monsterJsonRootPath string, monsterData []string) {
+	// This code was originally found in my roleplaying-utils package and was
+	// stripped out and added here as a new subcommand
+	var monsters map[string]*fetools.Monster
+
+	j, err := filepath.Glob(monsterJsonRootPath + string(os.PathSeparator) + "*.json")
+	if err != nil {
+		panic(err)
+	}
+
+	monsters = make(map[string]*fetools.Monster) // eventually move to API
+	for _, path := range j {
+		var parsed []fetools.Monster
+		parsed = fetools.Get5etoolsMonsters(path)
+		for i := range parsed {
+			var lName = strings.ToLower(parsed[i].Name)
+			if _, ok := monsters[lName]; !ok {
+				monsters[lName] = &parsed[i]
+			}
+		}
+	}
+
+	fmt.Printf("Read %d monsters.\n", len(monsters))
+
+	var output encounterData
+	var monsterName string
+	var monsterQty int
+	for i, val := range monsterData {
+		if i%2 == 0 {
+			monsterName = val
+		} else {
+			monsterQty, err = strconv.Atoi(val)
+			if err != nil {
+				panic("Expected quantity for " + monsterName)
+			}
+			if m, ok := monsters[strings.ToLower(monsterName)]; ok {
+				var i int
+				var p rpg.Character
+				p.Name = m.Name
+				p.Initiative = (m.Dex - 10) / 2
+				p.HP = uint(m.HP.Average)
+				fmt.Printf("Monster '%s' (%d): %+v\n", m.Name, monsterQty, m)
+				for i = 0; i < monsterQty; i++ {
+					output.Participants = append(output.Participants, &p)
+				}
+			} else {
+				fmt.Printf("Could not find monster '%s'\n", monsterName)
+			}
+		}
+	}
+
+	output.Encounter = &rpg.Encounter{}
+
+	file, _ := json.MarshalIndent(output, "", " ")
+	if err = ioutil.WriteFile(jsonPath, file, 0644); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Wrote a new encounter to " + jsonPath)
 }

@@ -17,10 +17,12 @@ This script has a number of commands and will eventually feature more.
 a [5etools](https://5etools.com/) JSON file or set of JSON files containing item
 data to populate weight and value data in a party inventory table.
 
-### Manage Encounters
+### Encounters
 
-`./airtable-dnd encounter <encounter_json_file_path> [submit/slots]` where the
-path to an encounter JSON file points to a file with the following example
+#### Manage Encounters
+
+`./airtable-dnd encounter run <encounter_json_file_path> [submit/slots]` where
+the path to an encounter JSON file points to a file with the following example
 format:
 
 ```
@@ -40,11 +42,20 @@ format:
 }
 ```
 
+#### Create Encounter JSONs
+
+`./airtable-dnd encounter create <encounter_json_file_path> <monsters_json_folder_path> monsterName # monsterName2 # ...`
+, where any number of monsters and quantity of respective are provided. This
+uses a [5etools](https://5etools.com/) folder path containing JSONs that have
+monster data, where the path to an encounter JSON file points to a new file that
+is made in the above format.
+
 ## Current Features
 
-  - Encounter submission/recordkeeping
-  - Encounter initiative order
-  - Management of party loot
+- Encounter submission/recordkeeping
+- Encounter initiative order
+- Encounter JSON creator (for use with the `run` subcommand)
+- Management of party loot
 
 ## Planned Features
 
