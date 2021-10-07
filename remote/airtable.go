@@ -1,24 +1,24 @@
-package store
+package remote
 
 import (
 	"fmt"
-	"github.com/AlexSafatli/airtable-dnd/entities"
+	"github.com/AlexSafatli/airtable-dnd/rpg"
 	"github.com/fabioberger/airtable-go"
 )
 
 type AirtableCharacter struct {
-	AirtableID string             `json:"id,omitempty"`
-	Fields     entities.Character `json:"fields"`
+	AirtableID string        `json:"id,omitempty"`
+	Fields     rpg.Character `json:"fields"`
 }
 
 type AirtableEncounter struct {
-	AirtableID string             `json:"id,omitempty"`
-	Fields     entities.Encounter `json:"fields"`
+	AirtableID string        `json:"id,omitempty"`
+	Fields     rpg.Encounter `json:"fields"`
 }
 
 type AirtableItem struct {
-	AirtableID string        `json:"id,omitempty"`
-	Fields     entities.Item `json:"fields"`
+	AirtableID string   `json:"id,omitempty"`
+	Fields     rpg.Item `json:"fields"`
 }
 
 func OpenConnection(apiKey, baseID string) (*airtable.Client, error) {
@@ -29,12 +29,12 @@ func OpenConnection(apiKey, baseID string) (*airtable.Client, error) {
 	return client, nil
 }
 
-func GetCharacters(tableName string, client *airtable.Client) []entities.Character {
+func GetCharacters(tableName string, client *airtable.Client) []rpg.Character {
 	var records []AirtableCharacter
 	if err := client.ListRecords(tableName, &records); err != nil {
-		return []entities.Character{}
+		return []rpg.Character{}
 	}
-	var characters []entities.Character
+	var characters []rpg.Character
 	for i := range records {
 		if len(records[i].Fields.Name) > 0 {
 			characters = append(characters, records[i].Fields)
@@ -43,7 +43,7 @@ func GetCharacters(tableName string, client *airtable.Client) []entities.Charact
 	return characters
 }
 
-func CreateCharacter(character entities.Character, tableName string, client *airtable.Client) (string, error) {
+func CreateCharacter(character rpg.Character, tableName string, client *airtable.Client) (string, error) {
 	record := AirtableCharacter{Fields: character}
 	err := client.CreateRecord(tableName, &record)
 	return record.AirtableID, err
@@ -54,12 +54,12 @@ func UpdateCharacterByID(id string, fields map[string]interface{}, tableName str
 	return client.UpdateRecord(tableName, id, fields, &record)
 }
 
-func GetEncounters(tableName string, client *airtable.Client) []entities.Encounter {
+func GetEncounters(tableName string, client *airtable.Client) []rpg.Encounter {
 	var records []AirtableEncounter
 	if err := client.ListRecords(tableName, &records); err != nil {
-		return []entities.Encounter{}
+		return []rpg.Encounter{}
 	}
-	var encounters []entities.Encounter
+	var encounters []rpg.Encounter
 	for i := range records {
 		if len(records[i].Fields.Name) > 0 {
 			encounters = append(encounters, records[i].Fields)
@@ -68,7 +68,7 @@ func GetEncounters(tableName string, client *airtable.Client) []entities.Encount
 	return encounters
 }
 
-func CreateEncounter(encounter entities.Encounter, tableName string, client *airtable.Client) (string, error) {
+func CreateEncounter(encounter rpg.Encounter, tableName string, client *airtable.Client) (string, error) {
 	if len(encounter.Name) == 0 {
 		encounter.Name = fmt.Sprintf("s%d_l%d_r%d", encounter.Session,
 			encounter.Level, encounter.Room)
@@ -83,9 +83,9 @@ func CreateEncounter(encounter entities.Encounter, tableName string, client *air
 	return record.AirtableID, err
 }
 
-func GetItems(tableName string, client *airtable.Client) []entities.Item {
+func GetItems(tableName string, client *airtable.Client) []rpg.Item {
 	var records = GetItemsWithIDs(tableName, client)
-	var items []entities.Item
+	var items []rpg.Item
 	for i := range records {
 		if len(records[i].Fields.Name) > 0 {
 			items = append(items, records[i].Fields)

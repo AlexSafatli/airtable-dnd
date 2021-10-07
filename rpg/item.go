@@ -1,4 +1,4 @@
-package entities
+package rpg
 
 type Item struct {
 	Name        string

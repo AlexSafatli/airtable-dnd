@@ -1,8 +1,8 @@
-package cmd
+package cli
 
 import (
 	"errors"
-	"github.com/AlexSafatli/airtable-dnd/store"
+	"github.com/AlexSafatli/airtable-dnd/remote"
 	"github.com/fabioberger/airtable-go"
 	"github.com/spf13/cobra"
 )
@@ -47,12 +47,13 @@ var cmdItems = &cobra.Command{
 var rootCmd = &cobra.Command{
 	Use:   "airtable-dnd",
 	Short: "airtable-dnd is a dungeon-mastering CLI for 5th Edition D&D campaigns",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// do nothing
 	},
 }
 
-func preRun(cmd *cobra.Command, args []string) {
+func preRun(_ *cobra.Command, _ []string) {
 	// Read config file(s)
 	conf = loadConfigs()
 
@@ -65,7 +66,7 @@ func preRun(cmd *cobra.Command, args []string) {
 
 	// Open AirTable connection to campaign base
 	var err error
-	conn, err = store.OpenConnection(conf.ApiKey, conf.CampaignBase)
+	conn, err = remote.OpenConnection(conf.ApiKey, conf.CampaignBase)
 	if err != nil {
 		panic(err)
 	}
