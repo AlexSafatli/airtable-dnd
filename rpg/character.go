@@ -1,27 +1,28 @@
 package rpg
 
 type Character struct {
-	Name            string
-	Race            string
-	Level           uint // == CR for Monsters
-	Class           string
+	Name            string `json:",omitempty"`
+	Race            string `json:",omitempty"`
+	Level           uint   `json:",omitempty"`
+	CR              uint   `json:",omitempty"`
+	Class           string `json:",omitempty"`
 	HP              uint
 	AC              uint
 	Initiative      int
 	PassivePer      uint `json:"Passive Per"`
 	DexST           int  `json:"Dex ST"`
 	Size            CharacterSize
-	Type            string
+	Type            string `json:",omitempty"`
 	Speed           uint8
-	Player          string
+	Player          string `json:",omitempty"`
 	Affiliated      bool
 	Gender          string // {Male, Female}
-	GenerationDelta int    `json:"Generation Delta"`
-	YOBDelta        int    `json:"Year of Birth Delta"`
-	YODDelta        int    `json:"Year of Death Delta"`
-	MotherID        uint   `json:"Mother ID"`
-	FatherID        uint   `json:"Father ID"`
-	LocationID      uint   `json:"Location ID"`
+	GenerationDelta int    `json:"Generation Delta,omitempty"`
+	YOBDelta        int    `json:"Year of Birth Delta,omitempty"`
+	YODDelta        int    `json:"Year of Death Delta,omitempty"`
+	MotherID        uint   `json:"Mother ID,omitempty"`
+	FatherID        uint   `json:"Father ID,omitempty"`
+	LocationID      uint   `json:"Location ID,omitempty"`
 }
 
 type CharacterSize uint8
