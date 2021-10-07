@@ -1,9 +1,7 @@
 # airtable-dnd
 A CLI to manage a D&amp;D campaign from the command line with Airtable.
 
-Currently *only partially implemented* (WIP) and only able to record encounters
-as they are completed alongside an optional ability to display the initiative
-order of characters and enemies.
+Currently *only partially implemented* (WIP). See **Current Features** below.
 
 ## Build
 

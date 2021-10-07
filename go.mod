@@ -6,5 +6,5 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/evalphobia/go-config-loader v0.1.3
 	github.com/fabioberger/airtable-go v3.1.0+incompatible
-	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/spf13/cobra v1.2.1
 )

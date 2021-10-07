@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -19,10 +19,10 @@ type InputEncounter struct {
 	Encounter    *entities.Encounter
 }
 
-func printInitiatives(initiatives map[*entities.Character]int) {
+func printInitiatives(initiatives map[*entities.Character]int, directive string) {
 	for _, char := range entities.RankInitiatives(initiatives).Characters() {
 		// Show turn slots (factions) instead
-		if len(os.Args) > 2 && os.Args[2] == "slots" {
+		if directive == "slots" {
 			var name string
 			if char.Affiliated {
 				name = char.Name
@@ -36,18 +36,13 @@ func printInitiatives(initiatives map[*entities.Character]int) {
 	}
 }
 
-func runEncounter(conf configValues, conn *airtable.Client) {
-	if len(os.Args) > 4 {
-		fmt.Printf("Usage of %s encounter:\n encounter <json> [submit/slots]", os.Args[0])
-		os.Exit(1)
-	}
-
+func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.Client) {
 	// Get characters
 	var characters = getAirtableCharacters(conf, conn)
 
 	// Read encounter data in as JSON; characters will be added
 	var encounter InputEncounter
-	f, err := os.Open(os.Args[2])
+	f, err := os.Open(jsonPath)
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +54,7 @@ func runEncounter(conf configValues, conn *airtable.Client) {
 	encounter.Encounter.NumPlayers = uint(len(characters))
 
 	// Submit to AirTable if "submit" command, otherwise continue
-	if len(os.Args) > 3 && os.Args[3] == "submit" {
+	if directive == "submit" {
 		// Save to Airtable
 		var id string
 		id, err = store.CreateEncounter(*encounter.Encounter, conf.TableNames.Encounters, conn)
@@ -90,20 +85,15 @@ func runEncounter(conf configValues, conn *airtable.Client) {
 		initiatives[&characters[i]] = initiative
 	}
 
-	printInitiatives(initiatives)
+	printInitiatives(initiatives, directive)
 }
 
-func manageItems(conf configValues, conn *airtable.Client) {
-	if len(os.Args) < 3 {
-		fmt.Printf("Usage of %s items:\n items <jsons>", os.Args[0])
-		os.Exit(1)
-	}
-
+func manageItems(jsons []string, conf configValues, conn *airtable.Client) {
 	// Get party items
 	var items = getAirtableItemsWithIDs(conf, conn)
 
 	// TODO: call 5etools API microservice to get this data; for now, read JSON
-	var itemMap = fetools.Get5etoolsItemMap(os.Args[2 : len(os.Args)-1])
+	var itemMap = fetools.Get5etoolsItemMap(jsons)
 
 	for i := range items {
 		var name = strings.ToLower(items[i].Fields.Name)
