@@ -16,7 +16,7 @@ type Character struct {
 	Speed           uint8
 	Player          string `json:",omitempty"`
 	Affiliated      bool
-	Gender          string // {Male, Female}
+	Gender          string `json:",omitempty"` // {Male, Female}
 	GenerationDelta int    `json:"Generation Delta,omitempty"`
 	YOBDelta        int    `json:"Year of Birth Delta,omitempty"`
 	YODDelta        int    `json:"Year of Death Delta,omitempty"`

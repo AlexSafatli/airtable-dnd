@@ -16,8 +16,8 @@ import (
 )
 
 type encounterData struct {
-	Participants []*rpg.Character
 	Encounter    *rpg.Encounter
+	Participants []*rpg.Character
 }
 
 func printInitiatives(initiatives map[*rpg.Character]int, directive string) {

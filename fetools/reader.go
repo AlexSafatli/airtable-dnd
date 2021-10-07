@@ -33,6 +33,7 @@ func Get5etoolsSpells(path string) []Spell {
 }
 
 func Get5etoolsMonsters(path string) []Monster {
+	// TODO custom unmarshal function to conform to 5etools (or correct in API)
 	var monsterList MonsterList
 	dat, err := ioutil.ReadFile(path)
 	if err != nil {
