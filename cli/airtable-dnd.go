@@ -2,12 +2,13 @@ package cli
 
 import (
 	"errors"
-	"github.com/AlexSafatli/airtable-dnd/remote"
+	"github.com/AlexSafatli/airtable-dnd/config"
+	"github.com/AlexSafatli/airtable-dnd/lib"
 	"github.com/fabioberger/airtable-go"
 	"github.com/spf13/cobra"
 )
 
-var conf configValues
+var conf config.Values
 var conn *airtable.Client
 
 var rootEncounterCmd = &cobra.Command{
@@ -31,7 +32,7 @@ var cmdEncounterCreate = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		createEncounter(args[0], args[1], args[2:])
+		lib.CreateEncounter(args[0], args[1], args[2:])
 	},
 }
 
@@ -55,7 +56,7 @@ var cmdEncounterRun = &cobra.Command{
 		if len(args) > 1 {
 			directive = args[1]
 		}
-		runEncounter(args[0], directive, conf, conn)
+		lib.RunEncounter(args[0], directive, conf, conn)
 	},
 }
 
@@ -80,7 +81,7 @@ var rootCmd = &cobra.Command{
 
 func preRun(_ *cobra.Command, _ []string) {
 	// Read config file(s)
-	conf = loadConfigs()
+	conf = config.LoadConfigs()
 
 	// Check for empty credentials
 	if len(conf.ApiKey) == 0 || len(conf.CampaignBase) == 0 {
@@ -91,7 +92,7 @@ func preRun(_ *cobra.Command, _ []string) {
 
 	// Open AirTable connection to campaign base
 	var err error
-	conn, err = remote.OpenConnection(conf.ApiKey, conf.CampaignBase)
+	conn, err = lib.OpenConnection(conf.ApiKey, conf.CampaignBase)
 	if err != nil {
 		panic(err)
 	}

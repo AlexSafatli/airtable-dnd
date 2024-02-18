@@ -1,4 +1,4 @@
-package remote
+package lib
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func OpenConnection(apiKey, baseID string) (*airtable.Client, error) {
 	return client, nil
 }
 
-func GetCharacters(tableName string, client *airtable.Client) []rpg.Character {
+func getCharacters(tableName string, client *airtable.Client) []rpg.Character {
 	var records []AirtableCharacter
 	if err := client.ListRecords(tableName, &records); err != nil {
 		return []rpg.Character{}
@@ -54,7 +54,7 @@ func UpdateCharacterByID(id string, fields map[string]interface{}, tableName str
 	return client.UpdateRecord(tableName, id, fields, &record)
 }
 
-func GetEncounters(tableName string, client *airtable.Client) []rpg.Encounter {
+func getEncounters(tableName string, client *airtable.Client) []rpg.Encounter {
 	var records []AirtableEncounter
 	if err := client.ListRecords(tableName, &records); err != nil {
 		return []rpg.Encounter{}
@@ -68,12 +68,12 @@ func GetEncounters(tableName string, client *airtable.Client) []rpg.Encounter {
 	return encounters
 }
 
-func CreateEncounter(encounter rpg.Encounter, tableName string, client *airtable.Client) (string, error) {
+func createEncounter(encounter rpg.Encounter, tableName string, client *airtable.Client) (string, error) {
 	if len(encounter.Name) == 0 {
 		encounter.Name = fmt.Sprintf("s%d_l%d_r%d", encounter.Session,
 			encounter.Level, encounter.Room)
 	}
-	for i, e := range GetEncounters(tableName, client) {
+	for i, e := range getEncounters(tableName, client) {
 		if e.Name == encounter.Name {
 			encounter.Name = e.Name + fmt.Sprintf("_%d", i)
 		}
@@ -83,8 +83,8 @@ func CreateEncounter(encounter rpg.Encounter, tableName string, client *airtable
 	return record.AirtableID, err
 }
 
-func GetItems(tableName string, client *airtable.Client) []rpg.Item {
-	var records = GetItemsWithIDs(tableName, client)
+func getItems(tableName string, client *airtable.Client) []rpg.Item {
+	var records = getItemsWithIDs(tableName, client)
 	var items []rpg.Item
 	for i := range records {
 		if len(records[i].Fields.Name) > 0 {
@@ -94,7 +94,7 @@ func GetItems(tableName string, client *airtable.Client) []rpg.Item {
 	return items
 }
 
-func GetItemsWithIDs(tableName string, client *airtable.Client) []AirtableItem {
+func getItemsWithIDs(tableName string, client *airtable.Client) []AirtableItem {
 	var records []AirtableItem
 	if err := client.ListRecords(tableName, &records); err != nil {
 		panic(err)

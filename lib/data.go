@@ -1,16 +1,16 @@
-package cli
+package lib
 
 import (
 	"fmt"
-	"github.com/AlexSafatli/airtable-dnd/remote"
+	"github.com/AlexSafatli/airtable-dnd/config"
 	"github.com/AlexSafatli/airtable-dnd/rpg"
 	"github.com/fabioberger/airtable-go"
 )
 
-func getAirtableCharacters(conf configValues, conn *airtable.Client) []rpg.Character {
+func GetAirtableCharacters(conf config.Values, conn *airtable.Client) []rpg.Character {
 	// Use AirTable connection to campaign base to get characters
 	var characters []rpg.Character
-	characters = remote.GetCharacters(conf.TableNames.Characters, conn)
+	characters = getCharacters(conf.TableNames.Characters, conn)
 	if len(characters) == 0 {
 		errStr := fmt.Sprintf("No characters found in table '%s' on AirTable", conf.TableNames.Characters)
 		panic(errStr)
@@ -18,10 +18,10 @@ func getAirtableCharacters(conf configValues, conn *airtable.Client) []rpg.Chara
 	return characters
 }
 
-func getAirtableItems(conf configValues, conn *airtable.Client) []rpg.Item {
+func GetAirtableItems(conf config.Values, conn *airtable.Client) []rpg.Item {
 	// Use AirTable connection to campaign base to get party/PC items
 	var items []rpg.Item
-	items = remote.GetItems(conf.TableNames.Items, conn)
+	items = getItems(conf.TableNames.Items, conn)
 	if len(items) == 0 {
 		errStr := fmt.Sprintf("No items found in table '%s' on AirTable", conf.TableNames.Items)
 		panic(errStr)
@@ -29,10 +29,10 @@ func getAirtableItems(conf configValues, conn *airtable.Client) []rpg.Item {
 	return items
 }
 
-func getAirtableItemsWithIDs(conf configValues, conn *airtable.Client) []remote.AirtableItem {
+func GetAirtableItemsWithIDs(conf config.Values, conn *airtable.Client) []AirtableItem {
 	// Get IDs too
-	var items []remote.AirtableItem
-	items = remote.GetItemsWithIDs(conf.TableNames.Items, conn)
+	var items []AirtableItem
+	items = getItemsWithIDs(conf.TableNames.Items, conn)
 	if len(items) == 0 {
 		errStr := fmt.Sprintf("No items found in table '%s' on AirTable", conf.TableNames.Items)
 		panic(errStr)

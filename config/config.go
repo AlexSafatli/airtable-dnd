@@ -1,4 +1,4 @@
-package cli
+package config
 
 import "github.com/evalphobia/go-config-loader"
 
@@ -14,7 +14,7 @@ const (
 	npcsTable       = "npcs.table_name"
 )
 
-type configValues struct {
+type Values struct {
 	ApiKey       string
 	CampaignBase string
 	TableNames   struct {
@@ -24,13 +24,13 @@ type configValues struct {
 	}
 }
 
-func loadConfigs() configValues {
+func LoadConfigs() Values {
 	var conf *config.Config
 	conf = config.NewConfig()
 	if err := conf.LoadConfigs(basePath, confType); err != nil {
 		panic(err)
 	}
-	return configValues{
+	return Values{
 		ApiKey:       conf.ValueString(apiKey),
 		CampaignBase: conf.ValueString(campaignBase),
 		TableNames: struct {

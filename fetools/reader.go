@@ -3,6 +3,7 @@ package fetools
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -35,7 +36,7 @@ func Get5etoolsSpells(path string) []Spell {
 func Get5etoolsMonsters(path string) []Monster {
 	// TODO custom unmarshal function to conform to 5etools (or correct in API)
 	var monsterList MonsterList
-	dat, err := ioutil.ReadFile(path)
+	dat, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +51,7 @@ func Get5etoolsItems(paths []string) []Item {
 	var itemList ItemList
 	for i := range paths {
 		var items ItemList
-		dat, err := ioutil.ReadFile(paths[i])
+		dat, err := os.ReadFile(paths[i])
 		if err != nil {
 			panic(err)
 		}

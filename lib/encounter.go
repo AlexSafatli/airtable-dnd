@@ -1,14 +1,14 @@
-package cli
+package lib
 
 import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/AlexSafatli/airtable-dnd/config"
 	"github.com/AlexSafatli/airtable-dnd/fetools"
-	"github.com/AlexSafatli/airtable-dnd/remote"
 	"github.com/AlexSafatli/airtable-dnd/rpg"
 	"github.com/fabioberger/airtable-go"
-	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -37,9 +37,9 @@ func printInitiatives(initiatives map[*rpg.Character]int, directive string) {
 	}
 }
 
-func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.Client) {
+func RunEncounter(jsonPath, directive string, conf config.Values, conn *airtable.Client) {
 	// Get characters
-	var characters = getAirtableCharacters(conf, conn)
+	var characters = GetAirtableCharacters(conf, conn)
 
 	// Read encounter data in as JSON; characters will be added
 	var encounter encounterData
@@ -58,7 +58,7 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 	if directive == "submit" {
 		// Save to Airtable
 		var id string
-		id, err = remote.CreateEncounter(*encounter.Encounter, conf.TableNames.Encounters, conn)
+		id, err = createEncounter(*encounter.Encounter, conf.TableNames.Encounters, conn)
 		if err != nil {
 			panic(err)
 		}
@@ -71,7 +71,7 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 	var initiatives map[*rpg.Character]int
 	initiatives = make(map[*rpg.Character]int)
 	for _, char := range encounter.Participants {
-		initiatives[char] = RollDice(1, 20) + char.Initiative
+		initiatives[char] = rollDice(1, 20) + char.Initiative
 	}
 
 	// Add PCs, get their initiatives
@@ -81,7 +81,7 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 		encounter.Participants = append(encounter.Participants, &characters[i])
 		fmt.Printf("Enter Initiative for %s: ", characters[i].Name)
 		if _, err := fmt.Scanf("%d", &initiative); err != nil {
-			initiative = RollDice(1, 20) + characters[i].Initiative
+			initiative = rollDice(1, 20) + characters[i].Initiative
 		}
 		initiatives[&characters[i]] = initiative
 	}
@@ -89,7 +89,7 @@ func runEncounter(jsonPath, directive string, conf configValues, conn *airtable.
 	printInitiatives(initiatives, directive)
 }
 
-func createEncounter(jsonPath, monsterJsonRootPath string, monsterData []string) {
+func CreateEncounter(jsonPath, monsterJsonRootPath string, monsterData []string) {
 	// This code was originally found in my roleplaying-utils package and was
 	// stripped out and added here as a new subcommand
 	var monsters map[string]*fetools.Monster
@@ -143,9 +143,18 @@ func createEncounter(jsonPath, monsterJsonRootPath string, monsterData []string)
 	output.Encounter = &rpg.Encounter{}
 
 	file, _ := json.MarshalIndent(output, "", " ")
-	if err = ioutil.WriteFile(jsonPath, file, 0644); err != nil {
+	if err = os.WriteFile(jsonPath, file, 0644); err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Wrote a new encounter to " + jsonPath)
+}
+
+func rollDice(num, sides uint) int {
+	var total int
+	var i uint
+	for i = 0; i < num; i++ {
+		total += rand.Intn(int(sides)) + 1
+	}
+	return total
 }
